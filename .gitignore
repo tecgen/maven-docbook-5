@@ -3,6 +3,9 @@
 #OSX
 .DS_Store
 
+# ignore all files ending with ~
+*~
+
 #Eclipse
 .settings
 .project
