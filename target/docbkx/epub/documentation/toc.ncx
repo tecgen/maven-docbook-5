@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE ncx
-  PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1"><head><meta name="dtb:uid" content="_d0e1"/></head><docTitle><text>Document Title</text></docTitle><navMap><navPoint id="d0e1" playOrder="1"><navLabel><text>Document Title</text></navLabel><content src="documentation.html"/><navPoint id="d0e20" playOrder="2"><navLabel><text>1. Einleitung</text></navLabel><content src="ch01.html"/><navPoint id="d0e23" playOrder="3"><navLabel><text>Historischer Hintergrund</text></navLabel><content src="ch01.html#d0e23"/></navPoint></navPoint><navPoint id="d0e28" playOrder="4"><navLabel><text>2. Änderungen der Versionen</text></navLabel><content src="ch02.html"/></navPoint></navPoint></navMap></ncx>
