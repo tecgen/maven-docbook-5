@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book version="5.0" xml:lang="de" xmlns="http://docbook.org/ns/docbook"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:m="http://www.w3.org/1998/Math/MathML"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <title>Document Title</title>
+
+    <subtitle>Subtitle example text</subtitle>
+
+    <author>
+      <personname>Marco Pehla</personname>
+    </author>
+
+    <releaseinfo>Version <?eval 1.0.0-SNAPSHOT?><literal/></releaseinfo>
+
+    <pubdate><?eval 2013-10-30-09:11?></pubdate>
+
+    <copyright>
+      <year>2013</year>
+
+      <holder>Example Company</holder>
+    </copyright>
+  </info>
+
+  <chapter>
+    <title>Einleitung</title>
+
+    <section>
+      <title>Historischer Hintergrund</title>
+
+      <para>...</para>
+    </section>
+  </chapter>
+
+  <chapter xml:id="Kapitel_Aenderungen_der_Versionen">
+    <title>Änderungen der Versionen</title>
+
+    <para>Im diesem Dokument hat sich fachlich folgendes mit den Versionen
+    geändert. Die Verlinkung von Änderungen muss entsprechend dem DocBook 5
+    Standart erfolgen.</para>
+
+    <itemizedlist>
+      <title>1.1 Änderungen nach der ersten Vorstellung beim
+      Auftraggeber</title>
+
+      <listitem>
+        <para>erste Änderung...</para>
+      </listitem>
+
+      <listitem>
+        <para>zweite Änderung... </para>
+      </listitem>
+    </itemizedlist>
+
+    <itemizedlist>
+      <title>1.0 Initiale Version</title>
+
+      <listitem>
+        <para>Dokument wurde erstellt von <author>
+            <personname>Marco Pehla</personname>
+          </author> und wurde abgenommen durch <person>
+            <personname>Bart Simpson</personname>
+          </person> am 26.07.2013</para>
+      </listitem>
+    </itemizedlist>
+  </chapter>
+</book>

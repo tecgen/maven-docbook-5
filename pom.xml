@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.company.artifact</groupId>
+	<artifactId>documentation</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>Documentation</name>
+	<packaging>pom</packaging>
+	<description>This project contains the complete documentation of the artifact ...</description>
+	<url>http://</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<organization.domain>company.org</organization.domain>
+        <organization.name>Example Company</organization.name>
+        <organization.url>http://www.${organization.domain}</organization.url>
+        <svn.url>https://svn.${organization.domain}/svn/folder</svn.url>
+		<site.url>http://www.${organization.domain}/webdav/sites/${project.artifactId}/${project.version}</site.url>
+		<!-- build time is referred during DocBook build -->
+        <maven.build.timestamp.format>yyyy-MM-dd-HH:mm</maven.build.timestamp.format>
+        <!-- necessary workaround -->
+        <timestamp>${maven.build.timestamp}</timestamp>
+	</properties>
+	<distributionManagement>
+        <site>
+            <id>ivar</id>
+            <url>dav:${site.url}</url>
+        </site>
+    </distributionManagement>
+    <organization>
+    	<name>${organization.name}</name>
+    	<url>${organization.url}</url>
+  	</organization>
+  	
+	<build>
+		<extensions>
+			<!-- support for the WEBDAV protocol, necessary to be able to upload our Maven site properly -->
+         	<extension>
+            	<groupId>org.apache.maven.wagon</groupId>
+            	<artifactId>wagon-webdav-jackrabbit</artifactId>
+            	<version>1.0-beta-7</version>
+         	</extension>
+     	</extensions> 
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+						<transformationSet>
+							<dir>src/main/resources/xml/</dir>
+							<stylesheet>src/main/resources/xsl/transformation.xsl</stylesheet>
+						</transformationSet>
+					</transformationSets>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.saxon</groupId>
+						<artifactId>saxon</artifactId>
+						<version>8.7</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>enforce</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>[2.0.6,)</version>
+								</requireMavenVersion>
+								<requireJavaVersion>
+									<version>[1.5,)</version>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- disabled since we are not able to validate against an Relax NG schema 
+				<plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>xml-maven-plugin</artifactId> 
+				<version>1.0</version> <executions> <execution> <phase>validate</phase> <goals> 
+				<goal>validate</goal> </goals> </execution> </executions> <configuration> 
+				<validationSets> <validationSet> <validating>false</validating> <dir>src/docbook</dir> 
+				<publicId>http://docbook.org/ns/docbook</publicId> <schemaLanguage>http://relaxng.org/ns/structure/1.0</schemaLanguage> 
+				<systemId>target/docbookxi.xsd</systemId> <excludes> <exclude>**/*.css</exclude> 
+				<exclude>**/img/*</exclude> </excludes> </validationSet> </validationSets> 
+				</configuration> </plugin> -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>filter-docbook-sources</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/docbkx</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/docbook</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<filters>
+								<filter>${basedir}/src/main/resources/application.properties</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.agilejava.docbkx</groupId>
+				<artifactId>docbkx-maven-plugin</artifactId>
+				<version>2.0.14</version>
+				<executions>
+					<execution>
+						<id>javahelp</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate-javahelp</goal>
+						</goals>
+						<configuration>
+							<type>javahelp</type>
+							<stylesheetPath>javahelp/javahelp.xsl</stylesheetPath>
+							<useStandardOutput>false</useStandardOutput>
+							<superClassName>com.agilejava.docbkx.maven.AbstractJavahelpMojo</superClassName>
+							<excludedProperties>${excluded.properties},root.filename,base.dir</excludedProperties>
+						</configuration>
+					</execution>
+					<execution>
+						<id>rtf</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate-rtf</goal>
+						</goals>
+						<configuration>
+							<type>fo</type>
+							<superClassName>com.agilejava.docbkx.maven.AbstractFoMojo</superClassName>
+							<className>DocbkxRtfMojo</className>
+							<pluginSuffix>rtf</pluginSuffix>
+							<targetFileExtension>rtf</targetFileExtension>
+							<excludedProperties>${excluded.properties}</excludedProperties>
+						</configuration>
+					</execution>
+					<execution>
+						<id>epub</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate-epub</goal>
+						</goals>
+						<configuration>
+							<type>epub</type>
+							<useStandardOutput>true</useStandardOutput>
+						</configuration>
+					</execution>
+					<execution>
+						<id>html</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate-xhtml</goal>
+						</goals>
+						<configuration>
+							<type>xhtml</type>
+							<htmlStylesheet>css/stylesheet.css</htmlStylesheet>
+							<htmlCustomization>../docbook-stylesheet/html/stylesheet.xsl</htmlCustomization>
+							
+							<preProcess>
+								<copy todir="target/site/manual/img">
+									<fileset dir="src/docbook/img" />
+								</copy>
+								<copy todir="target/site/manual/css">
+									<fileset dir="src/docbook/css" />
+								</copy>
+								<copy todir="target/site/manual/images">
+									<fileset dir="src/docbook-stylesheet/images" />
+								</copy>
+							</preProcess>
+							<postProcess>
+                        		<copy todir="target/site/manual">
+                            		<fileset dir="target/docbkx/xhtml"></fileset>
+                        		</copy>
+                    		</postProcess>
+						</configuration>
+					</execution>
+					<execution>
+						<id>pdf</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate-pdf</goal>
+						</goals>
+						<configuration>
+							<postProcess>
+                        		<copy todir="target/site/manual">
+                            		<fileset dir="target/docbkx/pdf"></fileset>
+                        		</copy>
+                    		</postProcess>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<sourceDirectory>${basedir}/target/docbkx</sourceDirectory>
+					<includes>*.xml</includes>
+					<generatedSourceDirectory>${project.build.directory}/docbkx/generated</generatedSourceDirectory>
+					<xincludeSupported>true</xincludeSupported>
+					<paperType>A4</paperType>
+					<chunkedOutput>false</chunkedOutput>
+					<fop1Extensions>1</fop1Extensions>
+					<foCustomization>src/docbook-stylesheet/fo/stylesheet.xsl</foCustomization>
+					<!-- <generateToc>book,section,toc,title,figure,table,example,equation</generateToc> -->
+					<!-- 
+					<customizationParameters>
+						<parameter>
+							<name>callout.graphics</name>
+							<value>1</value>
+						</parameter>
+					</customizationParameters>
+					 -->
+					 
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.docbook</groupId>
+						<artifactId>docbook-xml</artifactId>
+						<version>5.0-all</version>
+						<classifier>resources</classifier>
+						<type>zip</type>
+						<scope>runtime</scope>
+					</dependency>
+
+					<dependency>
+						<groupId>net.sf.xslthl</groupId>
+						<artifactId>xslthl</artifactId>
+						<version>2.0.2</version>
+						<scope>runtime</scope>
+					</dependency>
+					<dependency>
+						<groupId>net.sf.offo</groupId>
+						<artifactId>fop-hyph</artifactId>
+						<version>1.2</version>
+						<scope>runtime</scope>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<!-- example how to disable inherited plugins -->
+			<plugin>
+    			<groupId>org.codehaus.mojo</groupId>
+    			<artifactId>findbugs-maven-plugin</artifactId>
+			<version>2.5.2</version>
+    			<executions>
+        			<execution>
+            			<phase>none</phase>
+        			</execution>
+    			</executions>
+    		</plugin>
+		</plugins>
+	</build>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>docbook-utils</id>
+			<name>DocBook Utils</name>
+			<url>http://docbook-utils.sourceforge.net/maven2</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+	<developers>
+    	<developer>
+      		<id>mpehla</id>
+      		<name>Marco Pehla</name>
+     		 <email>Marco.Pehla@${organization.domain}</email>
+      		<url>${organization.url}</url>
+      		<organization>${organization.name}</organization>
+      		<organizationUrl>${organization.url}</organizationUrl>
+      		<roles>
+       		 	<role>architect</role>
+        		<role>developer</role>
+      		</roles>
+      		<timezone>+1</timezone>
+      		<!-- 
+      		<properties>
+        	<picUrl>http://...</picUrl>
+      		</properties>
+       		 -->
+    	</developer>
+  	</developers>
+  	<scm>
+    	<connection>scm:svn:${svn.url}</connection>
+    	<developerConnection>scm:svn:${svn.url}</developerConnection>
+    	<tag>HEAD</tag>
+    	<url>${svn.url}</url>
+  	</scm>
+  	<issueManagement>
+  		<system>JIRA</system>
+  		<url>https://www.${organization.domain}/development/jira/browse/PROJECT</url>
+  	</issueManagement>
+  	<mailingLists>
+  		<mailingList>
+  			<name>Topic</name>
+  			<post>topic@${organization.domain}</post>
+  		</mailingList>
+  	</mailingLists>
+</project>
